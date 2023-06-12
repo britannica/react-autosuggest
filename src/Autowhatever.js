@@ -39,6 +39,7 @@ export default class Autowhatever extends Component {
     renderSectionTitle: PropTypes.func, // This function gets a section and renders its title.
     getSectionItems: PropTypes.func, // This function gets a section and returns its items, which will be passed into `renderItem` for rendering.
     containerProps: PropTypes.object, // Arbitrary container props
+    suggestionListProps: PropTypes.object, // Arbitrary suggestion list props
     inputProps: PropTypes.object, // Arbitrary input props
     itemProps: PropTypes.oneOfType([
       // Arbitrary item props
@@ -70,6 +71,7 @@ export default class Autowhatever extends Component {
       throw new Error('`getSectionItems` must be provided');
     },
     containerProps: emptyObject,
+    suggestionListProps: emptyObject,
     inputProps: emptyObject,
     itemProps: emptyObject,
     highlightedSectionIndex: null,
@@ -195,6 +197,7 @@ export default class Autowhatever extends Component {
       highlightedSectionIndex,
       highlightedItemIndex,
       itemProps,
+      suggestionListProps,
     } = this.props;
 
     return items.map((section, sectionIndex) => {
@@ -231,6 +234,7 @@ export default class Autowhatever extends Component {
             }
             onHighlightedItemChange={this.onHighlightedItemChange}
             getItemId={this.getItemId}
+            itemsContainerProps={suggestionListProps}
             theme={theme}
             keyPrefix={keyPrefix}
             ref={this.storeItemsListReference}
@@ -251,6 +255,7 @@ export default class Autowhatever extends Component {
     const { theme } = this;
     const {
       id,
+      suggestionListProps,
       renderItem,
       renderItemData,
       highlightedSectionIndex,
@@ -261,6 +266,7 @@ export default class Autowhatever extends Component {
     return (
       <ItemList
         items={items}
+        itemsContainerProps={suggestionListProps}
         itemProps={itemProps}
         renderItem={renderItem}
         renderItemData={renderItemData}
@@ -296,11 +302,8 @@ export default class Autowhatever extends Component {
   };
 
   onKeyDown = (event) => {
-    const {
-      inputProps,
-      highlightedSectionIndex,
-      highlightedItemIndex,
-    } = this.props;
+    const { inputProps, highlightedSectionIndex, highlightedItemIndex } =
+      this.props;
     const { keyCode } = event;
 
     switch (keyCode) {
@@ -308,13 +311,11 @@ export default class Autowhatever extends Component {
       case 38: {
         // ArrowUp
         const nextPrev = keyCode === 40 ? 'next' : 'prev';
-        const [
-          newHighlightedSectionIndex,
-          newHighlightedItemIndex,
-        ] = this.sectionIterator[nextPrev]([
-          highlightedSectionIndex,
-          highlightedItemIndex,
-        ]);
+        const [newHighlightedSectionIndex, newHighlightedItemIndex] =
+          this.sectionIterator[nextPrev]([
+            highlightedSectionIndex,
+            highlightedItemIndex,
+          ]);
 
         inputProps.onKeyDown(event, {
           newHighlightedSectionIndex,
@@ -369,6 +370,7 @@ export default class Autowhatever extends Component {
     const { theme } = this;
     const {
       id,
+      items,
       multiSection,
       renderInputComponent,
       renderItemsContainer,
@@ -388,7 +390,8 @@ export default class Autowhatever extends Component {
     const containerProps = {
       role: 'combobox',
       'aria-haspopup': 'listbox',
-      'aria-owns': itemsContainerId,
+      'aria-owns': items.length ? itemsContainerId : undefined,
+      'aria-controls': items.length ? itemsContainerId : undefined,
       'aria-expanded': isOpen,
       ...theme(
         `react-autowhatever-${id}-container`,
@@ -402,7 +405,7 @@ export default class Autowhatever extends Component {
       value: '',
       autoComplete: 'off',
       'aria-autocomplete': 'list',
-      'aria-controls': itemsContainerId,
+      'aria-controls': items.length ? itemsContainerId : undefined,
       'aria-activedescendant': ariaActivedescendant,
       ...theme(
         `react-autowhatever-${id}-input`,
@@ -419,7 +422,6 @@ export default class Autowhatever extends Component {
     const itemsContainer = renderItemsContainer({
       containerProps: {
         id: itemsContainerId,
-        role: 'listbox',
         ...theme(
           `react-autowhatever-${id}-items-container`,
           'itemsContainer',

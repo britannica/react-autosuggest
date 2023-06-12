@@ -5,7 +5,9 @@ import compareObjects from './compareObjects';
 
 export default class ItemsList extends Component {
   static propTypes = {
+    id: PropTypes.string.isRequired,
     items: PropTypes.array.isRequired,
+    itemsContainerProps: PropTypes.object.isRequired,
     itemProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
     renderItem: PropTypes.func.isRequired,
     renderItemData: PropTypes.object.isRequired,
@@ -33,7 +35,9 @@ export default class ItemsList extends Component {
 
   render() {
     const {
+      id,
       items,
+      itemsContainerProps,
       itemProps,
       renderItem,
       renderItemData,
@@ -50,7 +54,12 @@ export default class ItemsList extends Component {
     const isItemPropsFunction = typeof itemProps === 'function';
 
     return (
-      <ul role="listbox" {...theme(`${sectionPrefix}items-list`, 'itemsList')}>
+      <ul
+        id={id}
+        role="listbox"
+        {...theme(`${sectionPrefix}items-list`, 'itemsList')}
+        {...itemsContainerProps}
+      >
         {items.map((item, itemIndex) => {
           const isFirst = itemIndex === 0;
           const isHighlighted = itemIndex === highlightedItemIndex;

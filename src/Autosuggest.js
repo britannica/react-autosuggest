@@ -96,6 +96,7 @@ export default class Autosuggest extends Component {
     theme: PropTypes.object,
     id: PropTypes.string,
     containerProps: PropTypes.object, // Arbitrary container props
+    suggestionListProps: PropTypes.object, // Arbitrary suggestion list props
   };
 
   static defaultProps = {
@@ -109,6 +110,7 @@ export default class Autosuggest extends Component {
     theme: defaultTheme,
     id: '1',
     containerProps: {},
+    suggestionListProps: {},
   };
 
   constructor({ alwaysRenderSuggestions }) {
@@ -173,11 +175,8 @@ export default class Autosuggest extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {
-      suggestions,
-      onSuggestionHighlighted,
-      highlightFirstSuggestion,
-    } = this.props;
+    const { suggestions, onSuggestionHighlighted, highlightFirstSuggestion } =
+      this.props;
 
     if (
       !shallowEqualArrays(suggestions, prevProps.suggestions) &&
@@ -441,9 +440,8 @@ export default class Autosuggest extends Component {
       this.findSuggestionElement(event.target)
     );
     const clickedSuggestion = this.getSuggestion(sectionIndex, suggestionIndex);
-    const clickedSuggestionValue = this.props.getSuggestionValue(
-      clickedSuggestion
-    );
+    const clickedSuggestionValue =
+      this.props.getSuggestionValue(clickedSuggestion);
 
     this.maybeCallOnChange(event, clickedSuggestionValue, 'click');
     this.onSuggestionSelected(event, {
@@ -454,9 +452,8 @@ export default class Autosuggest extends Component {
       method: 'click',
     });
 
-    const keepSuggestionsOnSelect = this.props.shouldKeepSuggestionsOnSelect(
-      clickedSuggestion
-    );
+    const keepSuggestionsOnSelect =
+      this.props.shouldKeepSuggestionsOnSelect(clickedSuggestion);
 
     if (!(alwaysRenderSuggestions || keepSuggestionsOnSelect)) {
       this.closeSuggestions();
@@ -561,6 +558,7 @@ export default class Autosuggest extends Component {
       alwaysRenderSuggestions,
       highlightFirstSuggestion,
       containerProps,
+      suggestionListProps,
     } = this.props;
     const {
       isFocused,
@@ -668,10 +666,8 @@ export default class Autosuggest extends Component {
                 event.preventDefault(); // We act on the key.
               }
             } else if (suggestions.length > 0) {
-              const {
-                newHighlightedSectionIndex,
-                newHighlightedItemIndex,
-              } = data;
+              const { newHighlightedSectionIndex, newHighlightedItemIndex } =
+                data;
 
               let newValue;
 
@@ -810,6 +806,7 @@ export default class Autosuggest extends Component {
         highlightedSectionIndex={highlightedSectionIndex}
         highlightedItemIndex={highlightedSuggestionIndex}
         containerProps={containerProps}
+        suggestionListProps={suggestionListProps}
         inputProps={autowhateverInputProps}
         itemProps={this.itemProps}
         theme={mapToAutowhateverTheme(theme)}
