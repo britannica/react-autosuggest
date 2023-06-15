@@ -5,7 +5,7 @@ import compareObjects from './compareObjects';
 
 export default class ItemsList extends Component {
   static propTypes = {
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
     items: PropTypes.array.isRequired,
     itemsContainerProps: PropTypes.object.isRequired,
     itemProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),

@@ -21,32 +21,42 @@ var defaultTheme = {
   sectionTitle: 'react-autosuggest__section-title',
 };
 exports.defaultTheme = defaultTheme;
+
 var mapToAutowhateverTheme = function mapToAutowhateverTheme(theme) {
   var result = {};
+
   for (var key in theme) {
     switch (key) {
       case 'suggestionsContainer':
         result['itemsContainer'] = theme[key];
         break;
+
       case 'suggestionsContainerOpen':
         result['itemsContainerOpen'] = theme[key];
         break;
+
       case 'suggestion':
         result['item'] = theme[key];
         break;
+
       case 'suggestionFirst':
         result['itemFirst'] = theme[key];
         break;
+
       case 'suggestionHighlighted':
         result['itemHighlighted'] = theme[key];
         break;
+
       case 'suggestionsList':
         result['itemsList'] = theme[key];
         break;
+
       default:
         result[key] = theme[key];
     }
   }
+
   return result;
 };
+
 exports.mapToAutowhateverTheme = mapToAutowhateverTheme;
